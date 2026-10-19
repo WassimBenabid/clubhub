@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ClubHub : les événements des clubs étudiants</title>
+  <link rel="stylesheet" href="css/style.css">
+  <!-- DÉFI "Pas de flash" : ce petit script est volontairement placé ICI, dans le <head>,
+       et NON dans app.js. Il lit le thème mémorisé et l'applique AVANT que le navigateur
+       dessine la page. Voir le README pour l'explication complète. -->
+  <script>
+    try {
+      const themeMemorise = localStorage.getItem('clubhub-theme');
+      if (themeMemorise === 'dark') {
+        document.documentElement.dataset.theme = 'dark';
+      }
+    } catch (erreur) {
+      /* localStorage peut être bloqué (navigation privée...) : on ignore */
+    }
+  </script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="logo" href="index.html">ClubHub</a>
+    <nav>
+      <ul>
+        <li><a href="index.html" aria-current="page">Accueil</a></li>
+        <li><a href="evenements.html">Événements</a></li>
+        <li><a href="evenement.html">S'inscrire</a></li>
+      </ul>
+    </nav>
+    <!-- Bouton de bascule clair/sombre : son texte et son action sont gérés dans app.js -->
+    <button type="button" class="theme-toggle">Mode sombre</button>
+  </header>
+
+  <main>
+    <section class="hero">
+      <h1>Tous les événements des clubs, au même endroit</h1>
+      <p>Ateliers, conférences, sorties, tournois : découvrez ce que font les clubs étudiants et réservez votre place en quelques secondes.</p>
+      <a class="button" href="evenements.html">Voir les événements</a>
+    </section>
+
+    <section>
+      <h2>Prochains événements</h2>
+      <div class="event-list">
+        <article class="event-card">
+          <p class="club">Club Robotique</p>
+          <h3>Atelier Arduino pour débutants</h3>
+          <p class="meta"><time datetime="10-14">14 octobre</time>, 14 h · Salle B204</p>
+          <a href="evenement.html">Voir le détail</a>
+        </article>
+        <article class="event-card">
+          <p class="club">Club Photo</p>
+          <h3>Sortie photo en ville</h3>
+          <p class="meta"><time datetime="10-17">17 octobre</time>, 9 h · Entrée principale</p>
+          <a href="evenement.html">Voir le détail</a>
+        </article>
+      </div>
+    </section>
+  </main>
+
+<footer class="site-footer">
+  <img src="evenement.jpg" alt="Image représentant l'événement du Club Robotique">
+  <p>ClubHub · La plateforme des clubs étudiants</p>
+</footer>
+  <script src="js/app.js"></script>
+</body>
+</html>

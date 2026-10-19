@@ -1,0 +1,676 @@
+/* =========================
+   1. VARIABLES
+   ========================= */
+
+:root {
+  /* Couleurs du site */
+  --bleu: #1f4e79;
+  --bleu-fonce: #173a5c;
+  --orange: #e67e22;
+  --blanc: #ffffff;
+  --gris-clair: #f4f6f8;
+  --gris: #dddddd;
+  --gris-texte: #555555;
+  --sombre: #222222;
+
+  /* Variables ajoutées au TP3 pour que le mode sombre fonctionne partout.
+     Avant, certaines couleurs étaient écrites "en dur" (#f0f0f0, #aaaaaa...)
+     ou réutilisaient --blanc pour du texte : impossible à inverser proprement. */
+  --entete: #1f4e79;          /* fond de l'en-tête et des titres de tableau */
+  --texte-clair: #ffffff;     /* texte posé sur un fond coloré (bleu, sombre) */
+  --pied: #222222;            /* fond du pied de page */
+  --ligne-paire: #f0f0f0;     /* lignes grises du tableau */
+  --bordure-champ: #aaaaaa;   /* bordure des champs de formulaire */
+  --erreur: #b00020;          /* rouge des messages d'erreur */
+  --succes-fond: #e6f4ea;     /* fond du message de succès */
+  --succes-texte: #1e6b34;    /* texte du message de succès */
+
+  /* Dimensions */
+  --rayon: 8px;
+  --espacement: 20px;
+  --largeur-max: 1100px;
+}
+
+/* MODE SOMBRE (TP3)
+   Quand le JavaScript met data-theme="dark" sur <html>, ce bloc redéfinit
+   les variables : tout le site change de couleur sans toucher aux autres règles.
+   Attention : en mode sombre, --blanc devient un gris foncé (c'est la couleur
+   des "surfaces" : cartes, formulaire...) et --sombre devient clair (le texte). */
+:root[data-theme="dark"] {
+  --bleu: #4a86c5;
+  --bleu-fonce: #3a6ea5;
+  --blanc: #1e2a38;
+  --gris-clair: #121a24;
+  --gris: #34445a;
+  --gris-texte: #b0bccb;
+  --sombre: #e8edf2;
+
+  /* Variables ajoutées plus haut, adaptées au sombre */
+  --entete: #173a5c;
+  --pied: #0b1118;
+  --ligne-paire: #25344a;
+  --bordure-champ: #5a6b82;
+  --erreur: #ff7b8f;
+  --succes-fond: #173a26;
+  --succes-texte: #8fe0aa;
+}
+
+
+/* =========================
+   2. STYLE GÉNÉRAL
+   ========================= */
+
+/* Tous les éléments utilisent la même taille */
+* {
+  box-sizing: border-box;
+}
+
+/* Empêche le défilement horizontal */
+html {
+  overflow-x: hidden;
+}
+
+/* Style général de la page */
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--gris-clair);
+  color: var(--sombre);
+  line-height: 1.6;
+}
+
+/* Contenu centré avec une largeur maximale */
+main {
+  width: 100%;
+  max-width: var(--largeur-max);
+  margin: 0 auto;
+  padding: 40px var(--espacement);
+}
+
+/* Les images restent dans leur conteneur */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+
+/* =========================
+   3. EN-TÊTE
+   ========================= */
+
+/* Barre du haut */
+.site-header {
+  background-color: var(--entete);
+  padding: var(--espacement);
+
+  /* Logo à gauche et menu à droite */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Logo ClubHub */
+.logo {
+  color: var(--texte-clair);
+  text-decoration: none;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+/* Menu horizontal */
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 25px;
+  margin: 0;
+  padding: 0;
+}
+
+/* Liens du menu */
+nav a {
+  color: var(--texte-clair);
+  text-decoration: none;
+  padding: 5px;
+}
+
+/* Souligne la page actuelle en orange */
+nav a[aria-current="page"] {
+  text-decoration: underline;
+  text-decoration-color: var(--orange);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 5px;
+}
+
+/* Change la couleur au survol */
+nav a:hover {
+  color: var(--orange);
+}
+
+
+/* =========================
+   4. SECTION HERO
+   ========================= */
+
+/* Bloc principal de la page d'accueil */
+.hero {
+  background-color: var(--blanc);
+  padding: 40px;
+  border-radius: var(--rayon);
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+/* Couleur du titre */
+.hero h1 {
+  color: var(--bleu);
+}
+
+
+/* =========================
+   5. BOUTONS
+   ========================= */
+
+/* Style des boutons */
+.button,
+button {
+  display: inline-block;
+  background-color: var(--bleu);
+  color: var(--texte-clair);
+  border: none;
+  border-radius: var(--rayon);
+  padding: 10px 20px;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+/* Couleur au survol */
+.button:hover,
+button:hover {
+  background-color: var(--bleu-fonce);
+}
+
+
+/* =========================
+   6. CARTES D'ÉVÉNEMENTS
+   ========================= */
+
+/* Les cartes utilisent Flexbox */
+.event-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacement);
+}
+
+/* Style d'une carte */
+.event-card {
+  background-color: var(--blanc);
+  border: 1px solid var(--gris);
+  border-top: 4px solid var(--bleu);
+  border-radius: var(--rayon);
+  padding: var(--espacement);
+
+  /* Permet de mettre le lien en bas */
+  display: flex;
+  flex-direction: column;
+
+  /* Une carte par ligne sur téléphone */
+  width: 100%;
+
+  /* Petite ombre */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+/* Nom du club */
+.event-card .club {
+  color: var(--orange);
+  font-size: 13px;
+  font-weight: bold;
+
+  /* Transforme le texte en majuscules */
+  text-transform: uppercase;
+
+  letter-spacing: 1px;
+}
+
+/* Titre de la carte */
+.event-card h2,
+.event-card h3 {
+  color: var(--bleu);
+}
+
+/* Informations de l'événement */
+.event-card .meta {
+  color: var(--gris-texte);
+}
+
+/* Le lien reste en bas de la carte */
+.event-card a {
+  margin-top: auto;
+  color: var(--bleu);
+  font-weight: bold;
+}
+
+
+/* =========================
+   7. PAGE ÉVÉNEMENT
+   ========================= */
+
+/* Place le détail et le formulaire côte à côte */
+.event-page {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+}
+
+/* Bloc des détails */
+.event-detail {
+  background-color: var(--blanc);
+  border: 1px solid var(--gris);
+  border-radius: var(--rayon);
+  padding: 30px;
+
+  /* Le détail est plus large */
+  flex: 2;
+}
+
+/* Bloc du formulaire */
+.registration {
+  background-color: var(--blanc);
+  border: 1px solid var(--gris);
+  border-radius: var(--rayon);
+  padding: 30px;
+
+  /* Le formulaire est plus petit */
+  flex: 1;
+
+  /* Le formulaire reste visible pendant le défilement */
+  position: sticky;
+  top: 20px;
+}
+
+/* Couleur des titres */
+.event-detail h1,
+.registration h2 {
+  color: var(--bleu);
+}
+
+/* Liste des informations */
+.facts {
+  padding-left: 20px;
+}
+
+
+/* =========================
+   8. FORMULAIRE
+   ========================= */
+
+/* Espace entre les éléments */
+.registration form p {
+  margin-bottom: 15px;
+}
+
+/* Les labels sont au-dessus des champs */
+.registration label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+/* Champs sur toute la largeur */
+input[type="text"],
+input[type="email"],
+select,
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--bordure-champ);
+  /* Fond et texte suivent le thème (sinon les champs restent blancs en sombre) */
+  background-color: var(--blanc);
+  color: var(--sombre);
+  border-radius: var(--rayon);
+  font-family: inherit;
+  font-size: 15px;
+}
+
+/* Rend le champ sélectionné visible */
+input:focus,
+select:focus,
+textarea:focus {
+  outline: 3px solid #8bb8e8;
+  border-color: var(--bleu);
+}
+
+/* Cadre des boutons radio */
+fieldset {
+  border: 1px solid var(--gris);
+  border-radius: var(--rayon);
+  padding: 15px;
+  margin-bottom: 15px;
+}
+
+/* Radio et texte restent sur la même ligne */
+fieldset label {
+  display: inline;
+  font-weight: normal;
+  margin-right: 15px;
+}
+
+/* Garde les radios et cases à leur taille normale */
+input[type="radio"],
+input[type="checkbox"] {
+  width: auto;
+  margin-right: 5px;
+}
+
+
+/* =========================
+   9. TABLEAU
+   ========================= */
+
+/* Le tableau prend toute la largeur */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--blanc);
+}
+
+/* En-tête du tableau en bleu */
+th {
+  background-color: var(--entete);
+  color: var(--texte-clair);
+  text-align: left;
+  padding: 12px;
+}
+
+/* Cellules du tableau */
+td {
+  padding: 12px;
+  border-bottom: 1px solid var(--gris);
+}
+
+/* Une ligne sur deux est grise */
+tbody tr:nth-child(even) {
+  background-color: var(--ligne-paire);
+}
+
+
+/* =========================
+   10. PIED DE PAGE
+   ========================= */
+
+/* Style général du footer */
+.site-footer {
+  background-color: var(--pied);
+  color: var(--texte-clair);
+  text-align: center;
+  padding: 25px var(--espacement);
+  margin-top: 40px;
+}
+
+/* Image du footer */
+.site-footer img {
+  width: 100px;
+  height: auto;
+  display: block;
+  margin: 0 auto 10px;
+}
+
+/* Texte du footer */
+.site-footer p {
+  margin: 0;
+}
+
+
+/* =========================
+   11. TÉLÉPHONE
+   ========================= */
+
+/* Style pour les petits écrans */
+@media (max-width: 639px) {
+
+  /* Logo et menu l'un sous l'autre */
+  .site-header {
+    flex-direction: column;
+    justify-content: center;
+    gap: 15px;
+    text-align: center;
+  }
+
+  /* Menu centré */
+  nav ul {
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  /* Réduit les marges */
+  main {
+    padding: 25px 15px;
+  }
+
+  /* Détail et formulaire l'un sous l'autre */
+  .event-page {
+    flex-direction: column;
+  }
+
+  /* Les deux blocs prennent toute la largeur */
+  .event-detail,
+  .registration {
+    width: 100%;
+  }
+
+  /* Le formulaire n'est plus sticky sur téléphone */
+  .registration {
+    position: static;
+  }
+
+  /* Une carte par ligne */
+  .event-card {
+    width: 100%;
+  }
+}
+
+
+/* =========================
+   12. TABLETTE
+   ========================= */
+
+/* À partir de 640px : deux cartes */
+@media (min-width: 640px) {
+
+  .event-card {
+    width: calc(50% - 10px);
+  }
+}
+
+
+/* =========================
+   13. ORDINATEUR
+   ========================= */
+
+/* À partir de 960px : trois cartes */
+@media (min-width: 960px) {
+
+  .event-card {
+    width: calc(33.333% - 14px);
+  }
+
+  /* Détail et formulaire côte à côte */
+  .event-page {
+    flex-direction: row;
+  }
+}
+
+
+/* =========================
+   15. TP3 : COMPOSANTS INTERACTIFS
+   ========================= */
+
+/* Sans cette règle, le "display: flex" des cartes gagnerait contre
+   l'attribut hidden et les cartes filtrées resteraient visibles. */
+.event-card[hidden],
+.empty-message[hidden],
+.form-success[hidden] {
+  display: none;
+}
+
+/* Bouton de thème dans l'en-tête */
+.theme-toggle {
+  background-color: transparent;
+  border: 1px solid var(--texte-clair);
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.theme-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.18);
+}
+
+/* Formulaire de filtres (page evenements) */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacement);
+  align-items: flex-end;
+  background-color: var(--blanc);
+  border: 1px solid var(--gris);
+  border-radius: var(--rayon);
+  padding: var(--espacement);
+  margin-bottom: var(--espacement);
+}
+
+.filters .filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1 1 180px;
+}
+
+.filters label {
+  font-weight: bold;
+}
+
+/* Case "Seulement mes favoris" : on garde la case à sa taille normale */
+.filters .filter-check {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+.results-count {
+  color: var(--gris-texte);
+  font-weight: bold;
+}
+
+.empty-message {
+  background-color: var(--blanc);
+  border: 1px dashed var(--gris);
+  border-radius: var(--rayon);
+  padding: var(--espacement);
+  text-align: center;
+  color: var(--gris-texte);
+}
+
+/* Étoile "favori" sur les cartes */
+.event-card {
+  position: relative;
+}
+
+.favorite-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: transparent;
+  color: var(--orange);
+  font-size: 24px;
+  line-height: 1;
+  padding: 4px 8px;
+}
+
+.favorite-btn:hover {
+  background-color: transparent;
+  transform: scale(1.15);
+}
+
+/* Messages d'erreur du formulaire */
+.field-error {
+  display: block;
+  color: var(--erreur);
+  font-weight: bold;
+  min-height: 1.2em;   /* évite que la page "saute" quand le message apparaît */
+}
+
+/* Champ invalide : bordure rouge */
+.is-invalid {
+  border-color: var(--erreur);
+  outline: 2px solid var(--erreur);
+}
+
+/* Compteur de caractères de la motivation */
+.counter {
+  display: block;
+  text-align: right;
+  color: var(--gris-texte);
+}
+
+/* À partir de 90 % de la limite : le compteur devient orange et gras */
+.counter.is-near-limit {
+  color: var(--orange);
+  font-weight: bold;
+}
+
+/* Message affiché quand le formulaire est valide */
+.form-success {
+  background-color: var(--succes-fond);
+  color: var(--succes-texte);
+  border-radius: var(--rayon);
+  padding: 12px 15px;
+  font-weight: bold;
+}
+
+
+/* =========================
+   14. IMPRESSION
+   ========================= */
+
+/* Style spécial pour l'impression */
+@media print {
+
+  /* Fond blanc et texte noir */
+  body {
+    background-color: white;
+    color: black;
+  }
+
+  /* Cache les éléments inutiles */
+  .site-header,
+  .site-footer,
+  .registration {
+    display: none;
+  }
+
+  /* Utilise toute la largeur */
+  main {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  /* Supprime bordure et ombre */
+  .event-detail {
+    border: none;
+    box-shadow: none;
+    padding: 0;
+  }
+
+  /* Le détail reste blanc à l'impression, même si l'écran était en mode sombre */
+  .event-detail {
+    background-color: white;
+  }
+
+  /* Titres en noir */
+  .event-detail h1,
+  .event-detail h2 {
+    color: black;
+  }
+}
