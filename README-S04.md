@@ -1,8 +1,8 @@
+## Wassim Benabid
 ## Atelier S04 : ClubHub en PHP
-
 ### Lancer le site
 Dans le dossier du projet : `php -S localhost:8000`, puis ouvrir http://localhost:8000/index.php
-(avec XAMPP/WAMP/MAMP : copier le dossier dans `htdocs`). Test d'installation : `bonjour.php`.
+Test d'installation : `bonjour.php`.
 
 ### Ce qui a été fait
 - **Base** : `includes/functions.php` (`e()`, `getEvents()`, `findEvent()`), `includes/header.php` et `footer.php`, pages `index.php`, `evenements.php`, `evenement.php` générées par des boucles, page 404 pour un id absent/invalide/inconnu, traitement du formulaire en POST avec validation serveur, sortie échappée par `e()`. Les anciens `.html` sont supprimés.
