@@ -14,3 +14,4 @@ Test d'installation : `bonjour.php`.
 - `data/events.php` : les données des 5 événements (descriptions, programmes, « à apporter ») ont été reprises du HTML d'origine et complétées.
 - `evenements.php` écrit toutes les cartes mais met `hidden` sur celles qui ne correspondent pas à `?q=`, afin que le JavaScript puisse les réafficher si on efface la recherche.
 - Les dates de `<time datetime>` sont maintenant au format valide AAAA-MM-JJ.
+- `css/style.css` : ajout de `input[type="search"]` à la règle des champs de formulaire. Le champ « Rechercher » de `evenements.php` (type `search`) n'avait pas le style des autres champs ni le mode sombre.
