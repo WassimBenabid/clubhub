@@ -1,16 +1,22 @@
 /* =====================================================================
    ClubHub · TP3 : js/app.js
    ---------------------------------------------------------------------
-   Ce fichier est chargé par TOUTES les pages (index, evenements,
-   evenement). Chaque page n'a pas les mêmes éléments : on utilise donc
+   Ce fichier est chargé par TOUTES les pages (index.php, evenements.php,
+   evenement.php).
+
+   CHANGEMENT PAR RAPPORT À LA VERSION SANS PHP : les événements ne sont
+   plus écrits dans ce fichier. PHP (data/events.php) génère déjà les
+   cartes dans la page ; le JavaScript ne fait que les filtrer, les trier
+   et gérer les favoris (amélioration progressive : sans JS, le site
+   fonctionne quand même grâce à PHP). Chaque page n'a pas les mêmes éléments : on utilise donc
    des "gardes" ("if (!element) return;") pour que le code d'une page
    ne plante pas sur une autre page (sinon : erreur dans la console).
 
    Plan du fichier :
      0. Constantes et petits outils
      1. Mode sombre (toutes les pages)
-     2. Page evenements.html : données, cartes, filtres, tri, favoris
-     3. Page evenement.html  : validation du formulaire, compteur
+     2. Page evenements.php  : filtres, tri, favoris (les cartes viennent de PHP)
+     3. Page evenement.php   : validation du formulaire, compteur
      4. Démarrage
    ===================================================================== */
 
@@ -104,75 +110,11 @@ function initTheme() {
 
 
 /* =====================================================================
-   2. PAGE evenements.html
+   2. PAGE evenements.php
    ===================================================================== */
 
 /* ---------------------------------------------------------------------
-   2.1 Les données (Défi "Cartes générées")
-   ---------------------------------------------------------------------
-   Les 5 événements sont maintenant des DONNÉES JavaScript, plus du HTML
-   écrit à la main. C'est une étape vers ce que fera un vrai serveur :
-   plus tard, le serveur (base de données + PHP, Node...) enverra cette
-   liste d'événements, et le navigateur construira les cartes dessus.
-   Le code de génération ci-dessous restera presque identique ; seule la
-   source du tableau changera (un appel au serveur à la place de ce tableau
-   écrit en dur). Ajouter un événement = ajouter un objet, pas copier du HTML.
-   --------------------------------------------------------------------- */
-const EVENTS = [
-  {
-    id: 'arduino',
-    club: 'Club Robotique',
-    title: 'Atelier Arduino pour débutants',
-    date: '2026-10-14',          // format ISO AAAA-MM-JJ : se trie correctement comme du texte
-    dateLabel: '14 octobre',     // texte affiché à l'écran
-    hour: '14 h',
-    place: 'Salle B204',
-    seats: 20
-  },
-  {
-    id: 'photo',
-    club: 'Club Photo',
-    title: 'Sortie photo en ville',
-    date: '2026-10-17',
-    dateLabel: '17 octobre',
-    hour: '9 h',
-    place: 'Entrée principale',
-    seats: 15
-  },
-  {
-    id: 'ia',
-    club: 'Club IA',
-    title: 'Conférence : l\'IA dans l\'industrie',
-    date: '2026-10-21',
-    dateLabel: '21 octobre',
-    hour: '10 h',
-    place: 'Amphithéâtre A',
-    seats: 120
-  },
-  {
-    id: 'echecs',
-    club: 'Club Échecs',
-    title: 'Tournoi blitz inter promo',
-    date: '2026-10-24',
-    dateLabel: '24 octobre',
-    hour: '15 h',
-    place: 'Foyer des étudiants',
-    seats: 32
-  },
-  {
-    id: 'hackathon',
-    club: 'Club Entrepreneuriat',
-    title: 'Hackathon impact social',
-    date: '2026-10-31',
-    dateLabel: '31 octobre',
-    hour: '9 h',
-    place: 'Salle C101',
-    seats: 40
-  }
-];
-
-/* ---------------------------------------------------------------------
-   2.2 Les favoris (Défi "Favoris")
+   2.1 Les favoris (Défi "Favoris")
    --------------------------------------------------------------------- */
 
 /**
@@ -200,72 +142,8 @@ function saveFavorites(favorites) {
 }
 
 /* ---------------------------------------------------------------------
-   2.3 Création d'une carte avec createElement
+   2.2 L'étoile des favoris (le bouton est écrit par PHP, on gère seulement son état)
    --------------------------------------------------------------------- */
-
-/**
- * Petit utilitaire : crée un élément, lui met une classe et un texte.
- * On utilise TOUJOURS textContent (jamais innerHTML) : le texte est affiché
- * tel quel, donc aucun risque d'injecter du code HTML/JS.
- */
-function createElementWithText(tag, className, text) {
-  const element = document.createElement(tag);
-  if (className !== '') {
-    element.className = className;
-  }
-  if (text !== '') {
-    element.textContent = text;
-  }
-  return element;
-}
-
-/**
- * Construit la carte HTML d'un événement. Elle reproduit exactement la
- * structure qui était écrite à la main dans evenements.html au TP1.
- */
-function createCard(eventData, favorites) {
-  const card = document.createElement('article');
-  card.className = 'event-card';
-
-  // Attributs data-* : le JavaScript les relira pour filtrer et trier.
-  // (dataset.club s'écrit data-club en HTML, etc.)
-  card.dataset.id = eventData.id;
-  card.dataset.club = eventData.club;
-  card.dataset.date = eventData.date;
-  card.dataset.places = String(eventData.seats);
-
-  card.appendChild(createElementWithText('p', 'club', eventData.club));
-  card.appendChild(createElementWithText('h2', '', eventData.title));
-
-  // <p class="meta"><time datetime="2026-10-14">14 octobre</time>, 14 h</p>
-  const dateLine = createElementWithText('p', 'meta', '');
-  const time = createElementWithText('time', '', eventData.dateLabel);
-  time.setAttribute('datetime', eventData.date);
-  dateLine.appendChild(time);
-  dateLine.appendChild(document.createTextNode(', ' + eventData.hour));
-  card.appendChild(dateLine);
-
-  card.appendChild(createElementWithText('p', 'meta', eventData.place));
-
-  // <p class="places"><strong>20</strong> places</p>
-  const placesLine = createElementWithText('p', 'places', '');
-  placesLine.appendChild(createElementWithText('strong', '', String(eventData.seats)));
-  placesLine.appendChild(document.createTextNode(' places'));
-  card.appendChild(placesLine);
-
-  const link = createElementWithText('a', '', 'Voir le détail');
-  link.setAttribute('href', 'evenement.html');
-  card.appendChild(link);
-
-  // Bouton étoile (favori)
-  const star = document.createElement('button');
-  star.type = 'button'; // type="button" : ne soumet aucun formulaire
-  star.className = 'favorite-btn';
-  setStarState(star, favorites.has(eventData.id), eventData.title);
-  card.appendChild(star);
-
-  return card;
-}
 
 /**
  * Met à jour l'apparence ET l'accessibilité de l'étoile :
@@ -282,10 +160,10 @@ function setStarState(star, isFavorite, title) {
 }
 
 /* ---------------------------------------------------------------------
-   2.4 Initialisation de la page : filtres, tri, compteur
+   2.3 Initialisation de la page : filtres, tri, compteur
    --------------------------------------------------------------------- */
 function initEventsPage() {
-  // Garde : si #search n'existe pas, on n'est pas sur evenements.html.
+  // Garde : si #search n'existe pas, on n'est pas sur evenements.php.
   const searchInput = document.querySelector('#search');
   if (searchInput === null) {
     return;
@@ -301,19 +179,11 @@ function initEventsPage() {
 
   const favorites = loadFavorites();
 
-  // --- Remplir la liste des clubs à partir des données -------------
-  // new Set(...) supprime les doublons (deux événements du même club).
-  const clubs = Array.from(new Set(EVENTS.map((eventData) => eventData.club)));
-  clubs.forEach((club) => {
-    const option = document.createElement('option');
-    option.value = club;
-    option.textContent = club;
-    clubSelect.appendChild(option);
-  });
-
-  // --- Créer les cartes --------------------------------------------
-  EVENTS.forEach((eventData) => {
-    list.appendChild(createCard(eventData, favorites));
+  // La liste des clubs et les cartes sont déjà dans la page : PHP les a générées.
+  // On met seulement chaque étoile dans le bon état (★ si l'événement est en favori).
+  list.querySelectorAll('.event-card').forEach((card) => {
+    const star = card.querySelector('.favorite-btn');
+    setStarState(star, favorites.has(card.dataset.id), star.dataset.title);
   });
 
   /**
@@ -376,8 +246,9 @@ function initEventsPage() {
   sortSelect.addEventListener('change', updateList);
   favoritesOnly.addEventListener('change', updateList);
 
-  // Si l'utilisateur appuie sur Entrée dans le champ de recherche, le navigateur
-  // voudrait envoyer le formulaire (et recharger la page) : on l'en empêche.
+  // AVEC JavaScript, le filtre est instantané : on empêche l'envoi du formulaire GET
+  // (sinon la page se rechargerait). SANS JavaScript, ce formulaire marche normalement
+  // et c'est PHP qui filtre (evenements.php?q=arduino).
   filtersForm.addEventListener('submit', (event) => {
     event.preventDefault();
   });
@@ -400,8 +271,8 @@ function initEventsPage() {
     }
     saveFavorites(favorites); // mémorisé dans localStorage
 
-    const eventData = EVENTS.find((item) => item.id === id);
-    setStarState(star, favorites.has(id), eventData.title);
+    // star.dataset.title = attribut data-title écrit par PHP (le titre de l'événement)
+    setStarState(star, favorites.has(id), star.dataset.title);
 
     // Si « Seulement mes favoris » est coché, la carte doit disparaître tout de suite
     updateList();
@@ -413,7 +284,7 @@ function initEventsPage() {
 
 
 /* =====================================================================
-   3. PAGE evenement.html : FORMULAIRE D'INSCRIPTION
+   3. PAGE evenement.php : FORMULAIRE D'INSCRIPTION
    ===================================================================== */
 
 // Même format d'email que celui utilisé couramment : quelquechose@quelquechose.extension
@@ -430,8 +301,6 @@ function initRegistrationForm() {
   if (form === null) {
     return;
   }
-
-  const successMessage = form.querySelector('.form-success');
 
   /* Pour chaque champ à valider on regroupe 3 choses :
        - input    : l'élément du formulaire
@@ -510,9 +379,9 @@ function initRegistrationForm() {
 
   // --- Validation à l'envoi (questions 4, 6 et 10) -------------------
   form.addEventListener('submit', (event) => {
-    // On bloque TOUJOURS l'envoi réel : il n'y a pas encore de serveur (inscription.php n'existe pas).
-    event.preventDefault();
-    successMessage.hidden = true;
+    // Depuis que PHP traite le formulaire, le JavaScript ne bloque l'envoi QUE si
+    // le formulaire est invalide (pour afficher les messages sans recharger la page).
+    // S'il est valide, on laisse le navigateur l'envoyer au serveur.
 
     let firstInvalid = null;
 
@@ -527,16 +396,12 @@ function initRegistrationForm() {
 
     if (firstInvalid !== null) {
       firstInvalid.focus(); // Accessibilité : le curseur va sur le premier champ à corriger
-      return;               // formulaire invalide : on s'arrête là
+      event.preventDefault(); // formulaire invalide : on bloque l'envoi
+      return;
     }
 
-    // Formulaire valide : message de succès (textContent -> sûr même avec un nom bizarre)
-    const name = document.querySelector('#name').value.trim();
-    successMessage.textContent = 'Merci ' + name + ', votre inscription est bien enregistrée !';
-    successMessage.hidden = false;
-
-    form.reset();     // vide le formulaire
-    updateCounter();  // remet le compteur à « 0 / 300 »
+    // Formulaire valide : on ne fait PAS preventDefault() -> le navigateur envoie le formulaire en POST.
+    // PHP le revalidera (on ne fait jamais confiance au navigateur) et affichera la confirmation.
   });
 
   // --- Correction en direct (question 5) -----------------------------
