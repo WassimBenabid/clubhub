@@ -320,6 +320,7 @@ button:hover {
 /* Champs sur toute la largeur */
 input[type="text"],
 input[type="email"],
+input[type="search"],
 select,
 textarea {
   width: 100%;
